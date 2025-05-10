@@ -62,11 +62,13 @@ public class doublescreenCameramanager : MonoBehaviour
         Vector3 planePos = plane.transform.position;
 
         float cameraBlendRatio = Vector3.Distance(camPos, blendPos) / Vector3.Distance(camPos, planePos);
+        float multiplyer = plane.transform.lossyScale.z / 10.0f;
 
-        float blendScale = (percentageOfCameraOverlap / 10f) * cameraBlendRatio;
+        float blendScale = (percentageOfCameraOverlap / 10f) * cameraBlendRatio * multiplyer;
 
         Vector3 newScale = blend.transform.localScale;
         newScale.z = blendScale;
+        newScale.x *= multiplyer;
         blend.transform.localScale = newScale;
     }
 
