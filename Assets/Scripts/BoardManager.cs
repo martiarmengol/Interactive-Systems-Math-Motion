@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;    
+
 
 public class BoardManager : MonoBehaviour
 {
@@ -28,12 +30,17 @@ public class BoardManager : MonoBehaviour
         SpawnDetectors();
     }
 
-    void SpawnDetectors()
+    private List<TileController> spawnedTiles = new List<TileController>();
+    public IReadOnlyList<TileController> Tiles => spawnedTiles;
+
+    public void SpawnDetectors()
     {
-        // clean old
+        // clear old
         foreach (Transform c in detectorsParent)
             Destroy(c.gameObject);
+        spawnedTiles.Clear();
 
+        // measure board and compute positions…
         // 1) measure your board
         float boardW = boardMesh.bounds.size.x;
         float boardH = boardMesh.bounds.size.z;
@@ -46,10 +53,7 @@ public class BoardManager : MonoBehaviour
         Vector3 detectorScale = new Vector3(tileW * 0.8f, 1f, tileH * 0.8f);
 
         // 4) find the world‐space center of the bottom‐left tile
-        Vector3 origin = boardMesh.bounds.center
-                       - new Vector3(boardW / 2f - tileW / 2f,
-                                     0,
-                                     boardH / 2f - tileH / 2f);
+        Vector3 origin = boardMesh.bounds.center - new Vector3(boardW / 2f - tileW / 2f, 0, boardH / 2f - tileH / 2f);
 
         // 5) spacing for dynamic grid of detectors
         float spacingX = detectorCols > 1
@@ -59,25 +63,18 @@ public class BoardManager : MonoBehaviour
           ? (boardH - tileH) / (detectorRows - 1)
           : 0f;
 
-        // 6) instantiate your NxM detectors
+        // instantiate NxM detectors
         for (int i = 0; i < detectorCols; i++)
-        {
             for (int j = 0; j < detectorRows; j++)
             {
-                Vector3 pos = origin
-                            + new Vector3(i * spacingX,
-                                          0,
-                                          j * spacingZ);
-
-                GameObject d = Instantiate(
-                    detectorPrefab,
-                    pos,
-                    Quaternion.identity,
-                    detectorsParent);
-
-                d.transform.localScale = detectorScale;
-                d.name = $"Detector_{i}_{j}";
+                Vector3 pos = origin + new Vector3(i * spacingX, 0, j * spacingZ);
+                GameObject go = Instantiate(detectorPrefab, pos, Quaternion.identity, detectorsParent);
+                go.transform.localScale = detectorScale;
+                go.name = $"Detector_{i}_{j}";
+                
+                var tile = go.GetComponent<TileController>();
+                tile.gridPos = new Vector2Int(i, j);
+                spawnedTiles.Add(tile);
             }
-        }
     }
 }
