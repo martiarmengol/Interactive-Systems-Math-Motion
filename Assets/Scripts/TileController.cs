@@ -1,46 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;   
+using UnityEngine.Events;
 
-
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Collider), typeof(MeshRenderer))]
 public class TileController : MonoBehaviour
 {
-    [HideInInspector] public Vector2Int gridPos;        
-    [HideInInspector] public bool isFilled = false;
+    [HideInInspector] public Vector2Int gridPos;
+    [HideInInspector] public bool isFilled;
 
-    [Header("Materials")]
-    public Material emptyMaterial;                      // assign gray
-    public Material filledMaterial;                     // assign green
+    [Header("Tile Materials")]
+    public Material emptyMaterial;
+    public Material filledMaterial;
 
-    // Event will pass this tile up to the manager
-    public UnityEvent<TileController> onTileFilled;
+    /// <summary>
+    /// Invoked when a Player collider first steps on this tile.
+    /// Passes (this tile, triggering collider).
+    /// </summary>
+    public UnityEvent<TileController, Collider> onTileFilled;
 
     private MeshRenderer mr;
 
-    private void Awake()
+    void Awake()
     {
         mr = GetComponent<MeshRenderer>();
-        mr.material = emptyMaterial;
+        ResetTile();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        // only fill once, only if it's a player
-        if (!isFilled && other.CompareTag("Player"))
-        {
-            isFilled = true;
-            mr.material = filledMaterial;
-            onTileFilled?.Invoke(this);
-        }
-    }
-
+    /// <summary>
+    /// Clears the fill state and resets the material to empty.
+    /// </summary>
     public void ResetTile()
     {
         isFilled = false;
-        mr.material = emptyMaterial;
+        if (mr != null && emptyMaterial != null)
+            mr.material = emptyMaterial;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!isFilled && (other.CompareTag("Player1") || other.CompareTag("Player2")))
+        {
+            isFilled = true;
+            if (filledMaterial != null)
+                mr.material = filledMaterial;
+
+            onTileFilled?.Invoke(this, other);
+        }
     }
 }
-
-

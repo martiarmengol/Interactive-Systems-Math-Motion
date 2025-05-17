@@ -1848,6 +1848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02083b00403036045add055d025ca505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mode: 0
   minValue: 1
   maxValue: 10
 --- !u!1 &295695988
@@ -6787,7 +6788,7 @@ GameObject:
   - component: {fileID: 1347768200}
   - component: {fileID: 1347768201}
   m_Layer: 0
-  m_Name: Game Mode 2 Manager
+  m_Name: Game Mode 1 Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6821,7 +6822,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 1119794203}
   opGen: {fileID: 267506682}
-  operationText: {fileID: 1236922410}
+  ui: {fileID: 535982645}
   winVFX: {fileID: 1576353655}
 --- !u!1 &1398017341
 GameObject:
