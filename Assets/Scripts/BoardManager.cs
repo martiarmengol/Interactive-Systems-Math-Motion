@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;    
-
+using System.Collections.Generic;
 
 public class BoardManager : MonoBehaviour
 {
-    [Header("Board Mesh (one 8×8 board)")]
-    public MeshRenderer boardMesh;
+    [Header("Manual Board Size (World Units)")]
+    public float boardWidth = 8f;  // Ancho manual del tablero.
+    public float boardHeight = 8f; // Alto manual del tablero.
 
     [Header("How many detectors?")]
-    [Tooltip("e.g. 2×2 for easy, 4×4 for medium, 8×8 for hard")]
     public int detectorCols = 8;
     public int detectorRows = 8;
 
@@ -16,65 +15,96 @@ public class BoardManager : MonoBehaviour
     public GameObject detectorPrefab;
     public Transform detectorsParent;
 
-    // these are always 8×8 for your chessboard
+    [Header("Hitbox Prefab")]
+    public GameObject hitboxPrefab;
+
+    // Constantes internas para referencia
     const int boardCols = 8;
     const int boardRows = 8;
-
-    void Start()
-    {
-        if (!boardMesh || !detectorPrefab || !detectorsParent)
-        {
-            Debug.LogError("BoardManager: Missing references!", this);
-            return;
-        }
-        SpawnDetectors();
-    }
 
     private List<TileController> spawnedTiles = new List<TileController>();
     public IReadOnlyList<TileController> Tiles => spawnedTiles;
 
+    void Start()
+    {
+        if (!detectorPrefab || !detectorsParent)
+        {
+            Debug.LogError("BoardManager: Missing references!", this);
+            return;
+        }
+
+        SpawnDetectors();
+    }
+
     public void SpawnDetectors()
     {
-        // clear old
+        // Limpiar detectores antiguos
         foreach (Transform c in detectorsParent)
             Destroy(c.gameObject);
         spawnedTiles.Clear();
 
-        // measure board and compute positions…
-        // 1) measure your board
-        float boardW = boardMesh.bounds.size.x;
-        float boardH = boardMesh.bounds.size.z;
+        float boardW = boardWidth;
+        float boardH = boardHeight;
 
-        // 2) compute the real tile size of an 8×8 board
-        float tileW = boardW / (float)boardCols;
-        float tileH = boardH / (float)boardRows;
+        float tileW = boardW / detectorCols;
+        float tileH = boardH / detectorRows;
 
-        // 3) detector scale is always based on that tile size
-        Vector3 detectorScale = new Vector3(tileW * 0.8f, 1f, tileH * 0.8f);
+        float detectorW = tileW * 0.8f;
+        float detectorH = tileH * 0.8f;
+        Vector3 detectorScale = new Vector3(detectorW, 1f, detectorH);
 
-        // 4) find the world‐space center of the bottom‐left tile
-        Vector3 origin = boardMesh.bounds.center - new Vector3(boardW / 2f - tileW / 2f, 0, boardH / 2f - tileH / 2f);
+        Vector3 origin = new Vector3(
+            -boardW / 2f + tileW / 2f,  // centro horizontal
+            -1.5f,                      // altura fija
+            -50f + tileH / 2f           // anclado al fondo
+        );
 
-        // 5) spacing for dynamic grid of detectors
-        float spacingX = detectorCols > 1
-          ? (boardW - tileW) / (detectorCols - 1)
-          : 0f;
-        float spacingZ = detectorRows > 1
-          ? (boardH - tileH) / (detectorRows - 1)
-          : 0f;
+        float spacingX = tileW;
+        float spacingZ = tileH;
 
-        // instantiate NxM detectors
         for (int i = 0; i < detectorCols; i++)
+        {
             for (int j = 0; j < detectorRows; j++)
             {
-                Vector3 pos = origin + new Vector3(i * spacingX, 0, j * spacingZ);
-                GameObject go = Instantiate(detectorPrefab, pos, Quaternion.identity, detectorsParent);
+                Vector3 basePos = origin + new Vector3(i * spacingX, 0f, j * spacingZ);
+
+                // Crear detector visual
+                GameObject go = Instantiate(detectorPrefab, basePos, Quaternion.identity, detectorsParent);
                 go.transform.localScale = detectorScale;
                 go.name = $"Detector_{i}_{j}";
-                
+
                 var tile = go.GetComponent<TileController>();
                 tile.gridPos = new Vector2Int(i, j);
                 spawnedTiles.Add(tile);
+
+                // Desactivar collider del propio detector visual (opcional)
+                Collider ownCollider = go.GetComponent<Collider>();
+                if (ownCollider)
+                    ownCollider.enabled = false;
+
+                // Crear hitbox transparente (trigger)
+                if (hitboxPrefab)
+                {
+                    float hitboxHeight = 2f;
+                    Vector3 hitboxScale = new Vector3(tileW, hitboxHeight, tileH);
+                    Vector3 hitboxPos = basePos + new Vector3(0f, hitboxHeight / 2f, 0f);
+
+                    GameObject hitbox = Instantiate(hitboxPrefab, hitboxPos, Quaternion.identity, detectorsParent);
+                    hitbox.transform.localScale = hitboxScale;
+                    hitbox.name = $"Hitbox_{i}_{j}";
+
+                    // Asignar collider al TileController
+                    Collider hitboxCollider = hitbox.GetComponent<Collider>();
+                    tile.interactionCollider = hitboxCollider;
+
+                    // Conectar el hitbox con el TileController para reenviar eventos
+                    var forwarder = hitbox.GetComponent<HitboxForwarder>();
+                    if (forwarder != null)
+                    {
+                        forwarder.tile = tile;
+                    }
+                }
             }
+        }
     }
 }

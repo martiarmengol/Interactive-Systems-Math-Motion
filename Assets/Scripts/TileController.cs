@@ -1,49 +1,55 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Collider), typeof(MeshRenderer))]
+[RequireComponent(typeof(Collider))]
 public class TileController : MonoBehaviour
 {
     [HideInInspector] public Vector2Int gridPos;
-    [HideInInspector] public bool isFilled;
+    [HideInInspector] public bool isFilled = false;
 
-    [Header("Tile Materials")]
+    [Header("Materials")]
     public Material emptyMaterial;
     public Material filledMaterial;
 
-    /// <summary>
-    /// Invoked when a Player collider first steps on this tile.
-    /// Passes (this tile, triggering collider).
-    /// </summary>
-    public UnityEvent<TileController, Collider> onTileFilled;
+    public Collider interactionCollider;
+    public UnityEvent<TileController> onTileFilled;
 
     private MeshRenderer mr;
+    private ColorChangeOnTouch colorChanger;
 
-    void Awake()
+    private void Awake()
     {
         mr = GetComponent<MeshRenderer>();
-        ResetTile();
+        colorChanger = GetComponent<ColorChangeOnTouch>();
+        mr.material = emptyMaterial;
     }
 
-    /// <summary>
-    /// Clears the fill state and resets the material to empty.
-    /// </summary>
+    public void NotifyTrigger(Collider other)
+    {
+        if (!isFilled && other.CompareTag("Player"))
+        {
+            isFilled = true;
+            mr.material = filledMaterial;
+            Debug.Log("Tile filled: " + gridPos);
+
+            colorChanger?.NotifyTrigger(other);  // Solo si el script existe
+            onTileFilled?.Invoke(this);
+        }
+    }
+
+    public void NotifyExit(Collider other)
+    {
+        if (isFilled && other.CompareTag("Player"))
+        {
+            colorChanger?.NotifyExit(other);
+        }
+    }
+
     public void ResetTile()
     {
         isFilled = false;
-        if (mr != null && emptyMaterial != null)
-            mr.material = emptyMaterial;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (!isFilled && (other.CompareTag("Player1") || other.CompareTag("Player2")))
-        {
-            isFilled = true;
-            if (filledMaterial != null)
-                mr.material = filledMaterial;
-
-            onTileFilled?.Invoke(this, other);
-        }
+        mr.material = emptyMaterial;
     }
 }

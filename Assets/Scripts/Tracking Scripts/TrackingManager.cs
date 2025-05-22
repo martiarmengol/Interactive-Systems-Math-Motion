@@ -304,6 +304,17 @@ public class TrackingManager : MonoBehaviour
         {
             players[playerSelected - 1].transform.Translate(Vector3.right * Time.deltaTime * trackingDisabledPlayerSpeed);
         }
+
+        //##
+        if (Input.GetKey(KeyCode.Q))
+        {
+            players[playerSelected - 1].transform.Translate(Vector3.up * Time.deltaTime * (trackingDisabledPlayerSpeed / 5f));
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            players[playerSelected - 1].transform.Translate(Vector3.down * Time.deltaTime * (trackingDisabledPlayerSpeed / 5f));
+        }
+        //##
     }
 
     /// <summary>
