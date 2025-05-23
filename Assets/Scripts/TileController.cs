@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Collider))]
@@ -32,10 +30,9 @@ public class TileController : MonoBehaviour
         {
             isFilled = true;
             mr.material = filledMaterial;
-            Debug.Log("Tile filled: " + gridPos);
-
-            colorChanger?.NotifyTrigger(other);  // Solo si el script existe
+            colorChanger?.NotifyTrigger(other);
             onTileFilled?.Invoke(this);
+            // ← no Debug.Log here any more
         }
     }
 
@@ -51,5 +48,14 @@ public class TileController : MonoBehaviour
     {
         isFilled = false;
         mr.material = emptyMaterial;
+    }
+
+    /// <summary>
+    /// Used by GameMode2Manager to light up the final rectangle.
+    /// </summary>
+    public void FillInstant()
+    {
+        isFilled = true;
+        mr.material = filledMaterial;
     }
 }
