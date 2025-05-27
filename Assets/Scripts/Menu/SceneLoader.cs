@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    // Call this from your button's OnClick
-    public void LoadSelectMode()
+
+    public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene("Select Mode");
-        
+        SceneManager.LoadScene(sceneName);
     }
 }

@@ -62,4 +62,8 @@ public class TileController : MonoBehaviour
         isFilled = true;
         colorChanger?.ForceLitColor();
     }
+
+    [Header("Mode 3 only")]
+    public int tileValue = 1;
+
 }
