@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Start Menu.unity
+    guid: 64cf7f3ed5ec4b143a8c696424798580
+  - enabled: 1
+    path: Assets/Scenes/Select Mode.unity
+    guid: 022acaabc8eb7934da0deef323ca7774
+  - enabled: 1
     path: Assets/Scenes/Mode One.unity
     guid: 7caa62cc387295b4f914c27933b17bf5
   - enabled: 0
@@ -15,9 +21,6 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/Start Menu.unity
-    guid: 64cf7f3ed5ec4b143a8c696424798580
-  - enabled: 1
-    path: Assets/Scenes/Select Mode.unity
-    guid: 022acaabc8eb7934da0deef323ca7774
+    path: Assets/Scenes/Mode Two.unity
+    guid: 3e3c5963263dbb1468a123eee19373cc
   m_configObjects: {}
