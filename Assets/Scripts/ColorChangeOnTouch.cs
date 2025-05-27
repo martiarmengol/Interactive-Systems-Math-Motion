@@ -3,7 +3,7 @@ using UnityEngine;
 public class ColorChangeOnTouch : MonoBehaviour
 {
     private Renderer rend;
-    private bool isLit = false;
+    public bool isLit = false;
 
     [Header("Configuración de colores")]
     public Color initialColor = Color.white;
@@ -43,4 +43,17 @@ public class ColorChangeOnTouch : MonoBehaviour
             OnTileUnlit?.Invoke(this);
         }
     }
+
+    public void ResetToInitialColor()
+    {
+        isLit = false;
+        if (rend != null) rend.material.color = initialColor;
+    }
+
+    public void ForceLitColor()
+    {
+        isLit = true;
+        if (rend != null) rend.material.color = litColor;
+    }
+
 }

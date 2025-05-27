@@ -7,38 +7,45 @@ public class TileController : MonoBehaviour
     [HideInInspector] public Vector2Int gridPos;
     [HideInInspector] public bool isFilled = false;
 
-    [Header("Materials")]
-    public Material emptyMaterial;
-    public Material filledMaterial;
-
     public Collider interactionCollider;
     public UnityEvent<TileController> onTileFilled;
 
-    private MeshRenderer mr;
-    private ColorChangeOnTouch colorChanger;
+    public ColorChangeOnTouch colorChanger;
 
     private void Awake()
     {
-        mr = GetComponent<MeshRenderer>();
         colorChanger = GetComponent<ColorChangeOnTouch>();
-        mr.material = emptyMaterial;
+        colorChanger?.ResetToInitialColor();
     }
 
     public void NotifyTrigger(Collider other)
     {
-        if (!isFilled && other.CompareTag("Player"))
+        // Permitir múltiples activaciones si IsSelected = true
+        if (colorChanger != null && colorChanger.IsSelected)
+        {
+            colorChanger.NotifyTrigger(other);
+            if (!isFilled)
+            {
+                isFilled = true;
+                onTileFilled?.Invoke(this);
+            }
+        }
+        else if (!isFilled && other.CompareTag("Player"))
         {
             isFilled = true;
-            mr.material = filledMaterial;
             colorChanger?.NotifyTrigger(other);
             onTileFilled?.Invoke(this);
-            // ← no Debug.Log here any more
         }
     }
 
     public void NotifyExit(Collider other)
     {
-        if (isFilled && other.CompareTag("Player"))
+        if (colorChanger != null && colorChanger.IsSelected)
+        {
+            colorChanger.NotifyExit(other);
+            isFilled = false; // Restablecer isFilled para permitir reactivación
+        }
+        else if (isFilled && other.CompareTag("Player"))
         {
             colorChanger?.NotifyExit(other);
         }
@@ -47,15 +54,12 @@ public class TileController : MonoBehaviour
     public void ResetTile()
     {
         isFilled = false;
-        mr.material = emptyMaterial;
+        colorChanger?.ResetToInitialColor();
     }
 
-    /// <summary>
-    /// Used by GameMode2Manager to light up the final rectangle.
-    /// </summary>
     public void FillInstant()
     {
         isFilled = true;
-        mr.material = filledMaterial;
+        colorChanger?.ForceLitColor();
     }
 }
