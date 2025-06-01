@@ -526,7 +526,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &51673985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1015,7 +1014,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &92382416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1620,7 +1618,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &157276139
 GameObject:
   m_ObjectHideFlags: 0
@@ -7969,7 +7966,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1001 &1233584223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8546,7 +8542,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &1304957655
 GameObject:
   m_ObjectHideFlags: 0
@@ -16166,7 +16161,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &1741870968
 GameObject:
   m_ObjectHideFlags: 1

@@ -3345,7 +3345,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!114 &545746214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3793,7 +3792,7 @@ MonoBehaviour:
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
-  enableYAxis: 0
+  enableYAxis: 1
   virtualWorldSpace: {x: 100, y: 1, z: 100}
   players:
   - {fileID: 1440896347}
@@ -14997,7 +14996,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!114 &1829376308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17288,7 +17286,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!114 &2087954977
 MonoBehaviour:
   m_ObjectHideFlags: 0

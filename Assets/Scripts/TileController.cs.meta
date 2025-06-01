@@ -3,7 +3,10 @@ guid: 371c105d677cb9842a5ade9329e65395
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - interactionCollider: {instanceID: 0}
+  - colorChanger: {instanceID: 0}
+  - stepSound: {fileID: 8300000, guid: 7093654cffd0b0f4b8c6d84ce24d9f78, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

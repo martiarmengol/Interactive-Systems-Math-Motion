@@ -526,7 +526,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &51673985
 GameObject:
   m_ObjectHideFlags: 0
@@ -3732,7 +3731,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &569510989
 GameObject:
   m_ObjectHideFlags: 0
@@ -5191,7 +5189,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!4 &752324773
 Transform:
   m_ObjectHideFlags: 0
@@ -6239,7 +6236,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &937439003
 GameObject:
   m_ObjectHideFlags: 0
@@ -8675,6 +8671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ui: {fileID: 535982645}
   boardManager: {fileID: 1119794203}
+  resultText: {fileID: 0}
   celebrationVFX: {fileID: 1576353655}
   controlKeyManager: {fileID: 1298587217}
 --- !u!114 &1347768202
@@ -16930,7 +16927,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!4 &1936964335
 Transform:
   m_ObjectHideFlags: 0
@@ -17947,7 +17943,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!1 &2041817075
 GameObject:
   m_ObjectHideFlags: 0

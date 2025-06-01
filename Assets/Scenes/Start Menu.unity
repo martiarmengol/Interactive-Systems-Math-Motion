@@ -3473,11 +3473,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrationUI: {fileID: 220600117}
   trackingInterface: {fileID: 220600112}
-  enableTracking: 0
+  enableTracking: 1
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
-  enableYAxis: 0
+  enableYAxis: 1
   virtualWorldSpace: {x: 100, y: 1, z: 100}
   players:
   - {fileID: 1440896347}
@@ -14425,7 +14425,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}
-  tileValue: 1
 --- !u!114 &1829376308
 MonoBehaviour:
   m_ObjectHideFlags: 0
