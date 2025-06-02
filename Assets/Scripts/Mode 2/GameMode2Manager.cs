@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;    // ← for LoadScene
 using TMPro;                         // ← for TextMeshProUGUI
 
+
 [RequireComponent(typeof(OperationGenerator2))]
 public class GameMode2Manager : MonoBehaviour
 {
@@ -29,6 +30,12 @@ public class GameMode2Manager : MonoBehaviour
     [Header("Control Keys (dual-player)")]
     public ControlKeyManager controlKeyManager;
 
+    public TextMeshProUGUI countdownText;  // referencia al contador visual
+
+    private Coroutine checkRoutine = null;
+    private bool isCheckingResult = false;
+
+
     // ─────────────────────────────────────────────────────────────
     // Internal state:
     OperationGenerator2 opGen;
@@ -40,15 +47,42 @@ public class GameMode2Manager : MonoBehaviour
     void Start()
     {
         opGen = GetComponent<OperationGenerator2>();
-        opGen.OnOperationGenerated += OnNewOperation;
 
-        // Kick off the first operation
+        // Configuración según dificultad
+        if (DifficultyManager.Instance == null || boardManager == null)
+        {
+            // Modo difícil por defecto si alguno es null
+            if (boardManager != null)
+            {
+                boardManager.detectorCols = 12;
+                boardManager.detectorRows = 10;
+                opGen.minOperand = 5;
+                opGen.maxOperand = 9;
+            }
+        } // <-- Aquí faltaba cerrar el primer if
+
+        if (DifficultyManager.Instance == null || DifficultyManager.Instance.CurrentDifficulty == Difficulty.Difficult)
+        {
+            boardManager.detectorCols = 12;
+            boardManager.detectorRows = 10;
+            opGen.minOperand = 5;
+            opGen.maxOperand = 9;
+        }
+        else // Easy
+        {
+            boardManager.detectorCols = 6;
+            boardManager.detectorRows = 5;
+            opGen.minOperand = 1;
+            opGen.maxOperand = 4;
+        }
+
+        opGen.OnOperationGenerated += OnNewOperation;
         opGen.Generate();
 
-        // Subscribe to the dual-player control‐key event
         if (controlKeyManager != null)
             controlKeyManager.OnKeyCombinationPressed += HandleKeyCombination;
     }
+
 
     void OnDestroy()
     {
@@ -103,14 +137,14 @@ public class GameMode2Manager : MonoBehaviour
             case KeyType.NEXT:
                 // If we are still “roundActive == true”, that means they have not yet validated.
                 // Once they press NEXT, we check “did they actually build the correct rectangle?”
-                if (roundActive)
+                if (roundActive && checkRoutine == null && !isCheckingResult)
                 {
-                    ValidateCurrentAnswer();
+                    checkRoutine = StartCoroutine(CheckResultRoutine());
                 }
+                break;
                 // If roundActive is false, then we are already in a “win/lose sequence” or paused state.
                 // In this simple implementation, we ignore “NEXT” presses once roundActive==false,
                 // because the coroutines themselves will auto‐advance or reset after their delay.
-                break;
 
             case KeyType.CLEAR:
                 if (roundActive)
@@ -126,6 +160,55 @@ public class GameMode2Manager : MonoBehaviour
                 break;
         }
     }
+
+    IEnumerator CheckResultRoutine()
+    {
+        isCheckingResult = true;
+        float countdown = 3f;
+        countdownText.gameObject.SetActive(true);
+
+        foreach (var tile in boardManager.Tiles.Where(t => t.isFilled))
+        {
+            tile.StartBlink();
+        }
+
+        while (countdown > 0f)
+        {
+            countdown -= Time.deltaTime;
+            countdownText.text = $"Checking in: {countdown:F1}s";
+            yield return null;
+        }
+
+        foreach (var tile in boardManager.Tiles.Where(t => t.isFilled))
+        {
+            tile.StopBlink();
+        }
+
+        countdownText.gameObject.SetActive(false);
+        ValidateCurrentAnswer(); // llamada a la validación original
+
+        checkRoutine = null;
+        isCheckingResult = false;
+    }
+
+    public void CancelCheck()
+    {
+        if (checkRoutine != null)
+        {
+            StopCoroutine(checkRoutine);
+            checkRoutine = null;
+        }
+
+        foreach (var tile in boardManager.Tiles.Where(t => t.isFilled))
+        {
+            tile.StopBlink();
+        }
+
+        isCheckingResult = false;
+        countdownText.gameObject.SetActive(false);
+        Debug.Log("Confirmación cancelada por salida de casilla.");
+    }
+
 
     // Called when NEXT is pressed the first time in a round
     void ValidateCurrentAnswer()
@@ -218,8 +301,8 @@ public class GameMode2Manager : MonoBehaviour
         // 4) Wait so they can see the red‐board / SFX
         yield return new WaitForSeconds(2f);
 
-        // 5) Reset this same operation (same a×b) so they can try again
-        ResetRound();
+        // 5) Automatically generate the next operation
+        opGen.Generate();
     }
 
 

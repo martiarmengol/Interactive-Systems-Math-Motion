@@ -120,6 +120,37 @@ public class GameMode1Manager : MonoBehaviour
 
     void StartRound()
     {
+        if (DifficultyManager.Instance == null || board == null)
+        {
+            // Modo difícil por defecto si alguno es null
+            if (board != null)
+            {
+                board.detectorCols = 12;
+                board.detectorRows = 10;
+                opGen.minValue = 5;
+                opGen.maxValue = 20;
+                opGen.mode = OperationGenerator.Mode.Mixed;
+            }
+            
+        }
+        else if (DifficultyManager.Instance.CurrentDifficulty == Difficulty.Difficult)
+        {
+            board.detectorCols = 12;
+            board.detectorRows = 10;
+            opGen.minValue = 5;
+            opGen.maxValue = 20;
+            opGen.mode = OperationGenerator.Mode.Mixed;
+        }
+        else // Easy
+        {
+            board.detectorCols = 6;
+            board.detectorRows = 5;
+            opGen.minValue = 1;
+            opGen.maxValue = 10;
+            opGen.mode = OperationGenerator.Mode.Addition;
+        }
+
+
         board.SpawnDetectors();
         filled.Clear();
         isCheckingResult = false;
@@ -138,6 +169,7 @@ public class GameMode1Manager : MonoBehaviour
 
         Debug.Log($"Nuevo round - Objetivo: {targetCount}");
     }
+
 
     void CheckResult()
     {

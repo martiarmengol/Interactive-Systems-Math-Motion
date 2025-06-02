@@ -2092,7 +2092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Fill the tiles
+  m_text: Easy
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
   m_sharedMaterial: {fileID: -2690195136076160118, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
@@ -3011,7 +3011,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Rows and Columns
+  m_text: Difficult
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
   m_sharedMaterial: {fileID: -2690195136076160118, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
@@ -3137,7 +3137,7 @@ PrefabInstance:
     - target: {fileID: 2458085582874039921, guid: d960fa67e057e3b458827153ed9c52f8, type: 3}
       propertyPath: targetTile
       value: 
-      objectReference: {fileID: 1829376308}
+      objectReference: {fileID: 0}
     - target: {fileID: 6812287887864889949, guid: d960fa67e057e3b458827153ed9c52f8, type: 3}
       propertyPath: m_Name
       value: Hitbox (2)
@@ -3309,10 +3309,10 @@ GameObject:
   - component: {fileID: 545746217}
   - component: {fileID: 545746216}
   - component: {fileID: 545746215}
-  - component: {fileID: 545746214}
   - component: {fileID: 545746213}
+  - component: {fileID: 545746214}
   m_Layer: 0
-  m_Name: Mode 2
+  m_Name: Difficult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3336,24 +3336,12 @@ MonoBehaviour:
   interactionCollider: {fileID: 1933725447}
   onTileFilled:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 881846392}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Mode Two
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
-  isDifficultySelector: 0
-  selectedDifficulty: 0
+  isDifficultySelector: 1
+  selectedDifficulty: 1
   stepVolume: 1
 --- !u!114 &545746214
 MonoBehaviour:
@@ -3364,13 +3352,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 545746212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b129135bebe3a4e82a6b8a9871f01d, type: 3}
+  m_Script: {fileID: 11500000, guid: c395a182835150847a95e270690b7e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLit: 0
-  initialColor: {r: 0.18823531, g: 0.2901961, b: 0.5058824, a: 1}
-  litColor: {r: 1, g: 1, b: 1, a: 1}
-  IsSelected: 1
+  difficultyType: 1
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  unselectedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!65 &545746215
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4979,6 +4966,76 @@ MonoBehaviour:
   initialColor: {r: 1, g: 1, b: 1, a: 1}
   litColor: {r: 0, g: 1, b: 0, a: 1}
   IsSelected: 0
+--- !u!1 &773622312
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 773622314}
+  - component: {fileID: 773622313}
+  m_Layer: 0
+  m_Name: DifficultyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &773622313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773622312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f3a1c4896bb88d458ae57773c7764c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnDifficultyChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1829376306}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 545746212}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!4 &773622314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773622312}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &776903731
 GameObject:
   m_ObjectHideFlags: 0
@@ -6961,7 +7018,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Difficulty
+  m_text: Return to the menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
   m_sharedMaterial: {fileID: -2690195136076160118, guid: 9068b52dc9bdcd14a9d8b07e1e34ff5e, type: 2}
@@ -14970,10 +15027,10 @@ GameObject:
   - component: {fileID: 1829376311}
   - component: {fileID: 1829376310}
   - component: {fileID: 1829376309}
-  - component: {fileID: 1829376308}
   - component: {fileID: 1829376307}
+  - component: {fileID: 1829376308}
   m_Layer: 0
-  m_Name: Mode 1
+  m_Name: Easy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14997,23 +15054,11 @@ MonoBehaviour:
   interactionCollider: {fileID: 1423295638}
   onTileFilled:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 881846392}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Mode One
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
-  isDifficultySelector: 0
+  isDifficultySelector: 1
   selectedDifficulty: 0
   stepVolume: 1
 --- !u!114 &1829376308
@@ -15025,13 +15070,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1829376306}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b129135bebe3a4e82a6b8a9871f01d, type: 3}
+  m_Script: {fileID: 11500000, guid: c395a182835150847a95e270690b7e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLit: 0
-  initialColor: {r: 0.18823531, g: 0.2901961, b: 0.5058824, a: 1}
-  litColor: {r: 1, g: 1, b: 1, a: 1}
-  IsSelected: 1
+  difficultyType: 0
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  unselectedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!65 &1829376309
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15757,7 +15801,7 @@ PrefabInstance:
     - target: {fileID: 2458085582874039921, guid: d960fa67e057e3b458827153ed9c52f8, type: 3}
       propertyPath: targetTile
       value: 
-      objectReference: {fileID: 545746214}
+      objectReference: {fileID: 0}
     - target: {fileID: 6812287887864889949, guid: d960fa67e057e3b458827153ed9c52f8, type: 3}
       propertyPath: m_Name
       value: Hitbox (2)
@@ -17269,7 +17313,7 @@ GameObject:
   - component: {fileID: 2087954977}
   - component: {fileID: 2087954976}
   m_Layer: 0
-  m_Name: Difficulty
+  m_Name: Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17303,7 +17347,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Set difficulty
+          m_StringArgument: Select Mode
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}

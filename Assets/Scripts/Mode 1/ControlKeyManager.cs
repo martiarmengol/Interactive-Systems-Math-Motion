@@ -85,8 +85,10 @@ public class ControlKeyManager : MonoBehaviour
         if (keyType == KeyType.NEXT)
         {
             FindObjectOfType<GameMode1Manager>()?.CancelCheck();
+            FindObjectOfType<GameMode2Manager>()?.CancelCheck();
         }
     }
+
 
     void CheckKeyCombination(KeyType keyType)
     {

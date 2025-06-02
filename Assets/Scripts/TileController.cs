@@ -30,6 +30,9 @@ public class TileController : MonoBehaviour
 
     public GameMode1Manager gameManager;
 
+    [Header("Difficulty Selection")]
+    public bool isDifficultySelector = false;
+    public Difficulty selectedDifficulty;  // Easy o Difficult
 
 
     public float stepVolume = 1f;
@@ -52,6 +55,12 @@ public class TileController : MonoBehaviour
             {
                 // Use PlayClipAtPoint so you don't need a per-tile AudioSource:
                 AudioSource.PlayClipAtPoint(stepSound, transform.position, stepVolume);
+            }
+
+            if (isDifficultySelector)
+            {
+                DifficultyManager.Instance?.SetDifficulty(selectedDifficulty);
+                return;
             }
 
             // 2) Then continue with the existing “fill” logic:

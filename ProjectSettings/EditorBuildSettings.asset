@@ -12,14 +12,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Select Mode.unity
     guid: 022acaabc8eb7934da0deef323ca7774
   - enabled: 1
+    path: Assets/Scenes/Set difficulty.unity
+    guid: 58a4a5aacd9c21b42a40943c135832c9
+  - enabled: 1
     path: Assets/Scenes/Mode One.unity
     guid: 7caa62cc387295b4f914c27933b17bf5
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Mode Two.unity
     guid: 3e3c5963263dbb1468a123eee19373cc
