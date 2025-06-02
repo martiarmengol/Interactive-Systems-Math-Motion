@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class HeightMaterialChanger : MonoBehaviour
 {
-    public Material defaultMaterial;
-    public Material aboveMaterial;
+    public Material defaultMaterial;  // Material when below threshold
+    public Material aboveMaterial;    // Material when above threshold
 
     private Renderer rend;
     private bool isAbove = false;
@@ -17,7 +17,7 @@ public class HeightMaterialChanger : MonoBehaviour
             return;
         }
 
-        rend.sharedMaterial = defaultMaterial;
+        rend.sharedMaterial = defaultMaterial;  // Set initial material
     }
 
     void Update()
@@ -26,7 +26,7 @@ public class HeightMaterialChanger : MonoBehaviour
         {
             if (!isAbove)
             {
-                rend.sharedMaterial = aboveMaterial;
+                rend.sharedMaterial = aboveMaterial;  // Switch to above material
                 isAbove = true;
             }
         }
@@ -34,7 +34,7 @@ public class HeightMaterialChanger : MonoBehaviour
         {
             if (isAbove)
             {
-                rend.sharedMaterial = defaultMaterial;
+                rend.sharedMaterial = defaultMaterial;  // Revert to default
                 isAbove = false;
             }
         }
