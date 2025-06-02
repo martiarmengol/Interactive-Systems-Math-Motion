@@ -528,10 +528,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &51673985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,10 +1022,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &92382416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1296,10 +1296,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &157276139
 GameObject:
   m_ObjectHideFlags: 0
@@ -3256,7 +3256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrationUI: {fileID: 220600117}
   trackingInterface: {fileID: 220600112}
-  enableTracking: 0
+  enableTracking: 1
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
@@ -5611,10 +5611,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1001 &1233584223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6081,10 +6081,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &1304957655
 GameObject:
   m_ObjectHideFlags: 0
@@ -6409,11 +6409,10 @@ MonoBehaviour:
   celebrationVFX: {fileID: 1659659384}
   winAudioSource: {fileID: 1311952644}
   winAudioClip: {fileID: 8300000, guid: cf9a255ccfd90ef48963290221e179f0, type: 3}
-  winVolume: 1
-  loseVFX: {fileID: 0}
+  winVolume: 0.2
   loseAudioSource: {fileID: 1311952644}
   loseAudioClip: {fileID: 8300000, guid: c46f5af1688c3d94ca707c901d8ed211, type: 3}
-  loseVolume: 1
+  loseVolume: 0.1
   countdownText: {fileID: 2122534172}
 --- !u!1001 &1352773989
 PrefabInstance:
@@ -8384,10 +8383,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &1741870968
 GameObject:
   m_ObjectHideFlags: 1

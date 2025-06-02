@@ -21,7 +21,6 @@ public class GameMode1Manager : MonoBehaviour
     [Range(0f, 1f)] public float winVolume = 1f;
 
     [Header("Lose Effects")]
-    public ParticleSystem loseVFX;
     public AudioSource loseAudioSource;
     public AudioClip loseAudioClip;
     [Range(0f, 1f)] public float loseVolume = 1f;

@@ -538,10 +538,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &51673985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2857,10 +2857,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &569510989
 GameObject:
   m_ObjectHideFlags: 0
@@ -3210,7 +3210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrationUI: {fileID: 220600117}
   trackingInterface: {fileID: 220600112}
-  enableTracking: 0
+  enableTracking: 1
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
@@ -4101,10 +4101,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!4 &752324773
 Transform:
   m_ObjectHideFlags: 0
@@ -4661,10 +4661,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &895917128
 GameObject:
   m_ObjectHideFlags: 0
@@ -4933,7 +4933,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 2100000, guid: aeac4eabe2a60534eb3f88484522593d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6240,11 +6240,10 @@ MonoBehaviour:
   celebrationVFX: {fileID: 22606570}
   winAudioSource: {fileID: 1504746478}
   winAudioClip: {fileID: 8300000, guid: cf9a255ccfd90ef48963290221e179f0, type: 3}
-  winVolume: 1
-  loseVFX: {fileID: 0}
+  winVolume: 0.2
   loseAudioSource: {fileID: 1504746478}
   loseAudioClip: {fileID: 8300000, guid: c46f5af1688c3d94ca707c901d8ed211, type: 3}
-  loseVolume: 1
+  loseVolume: 0.1
   controlKeyManager: {fileID: 1298587217}
   countdownText: {fileID: 1378199267}
 --- !u!114 &1347768202
@@ -9136,10 +9135,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!4 &1936964335
 Transform:
   m_ObjectHideFlags: 0
@@ -10110,10 +10109,10 @@ MonoBehaviour:
       m_Calls: []
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!1 &2041817075
 GameObject:
   m_ObjectHideFlags: 0
@@ -10387,7 +10386,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 2100000, guid: aeac4eabe2a60534eb3f88484522593d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

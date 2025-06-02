@@ -8,50 +8,47 @@ using TMPro;                         // ← for TextMeshProUGUI
 public class GameMode2Manager : MonoBehaviour
 {
     [Header("UI & Board")]
-    public UIManager ui;
-    public BoardManager boardManager;
+    public UIManager ui; // Reference to UI manager
+    public BoardManager boardManager; // Reference to board manager
 
     [Header("Origin Highlight")]
-    public Color originColor = Color.yellow;
+    public Color originColor = Color.yellow; // Color for origin tile
 
     [Header("Win VFX & SFX")]
-    public ParticleSystem celebrationVFX;
-    public AudioSource winAudioSource;
-    public AudioClip winAudioClip;
+    public ParticleSystem celebrationVFX; // Particle effect for win
+    public AudioSource winAudioSource; // Audio source for win sound
+    public AudioClip winAudioClip; // Win sound clip
     [Range(0f, 1f)]
-    public float winVolume = 1f;
+    public float winVolume = 1f; // Volume for win sound
 
     [Header("Lose VFX & SFX")]
-    public ParticleSystem loseVFX;
-    public AudioSource loseAudioSource;
-    public AudioClip loseAudioClip;
+    public AudioSource loseAudioSource; // Audio source for lose sound
+    public AudioClip loseAudioClip; // Lose sound clip
     [Range(0f, 1f)]
-    public float loseVolume = 1f;
+    public float loseVolume = 1f; // Volume for lose sound
 
     [Header("Control Keys (dual-player)")]
-    public ControlKeyManager controlKeyManager;
+    public ControlKeyManager controlKeyManager; // Reference to control key manager
 
-    public TextMeshProUGUI countdownText;  // referencia al contador visual
+    public TextMeshProUGUI countdownText;  // Reference to countdown text
 
-    private Coroutine checkRoutine = null;
-    private bool isCheckingResult = false;
+    private Coroutine checkRoutine = null; // Coroutine for checking result
+    private bool isCheckingResult = false; // Flag for checking result
 
-    // ─────────────────────────────────────────────────────────────
     // Internal state:
-    OperationGenerator2 opGen;
-    bool roundActive;       // “true” while we are waiting for students to fill in tiles
-    bool originSet;         // “true” once we've seen at least one filled tile
-    TileController originTile;
+    OperationGenerator2 opGen; // Reference to operation generator
+    bool roundActive;       // Flag for active round
+    bool originSet;         // Flag for origin set
+    TileController originTile; // Reference to origin tile
 
-    // ─────────────────────────────────────────────────────────────
     void Start()
     {
         opGen = GetComponent<OperationGenerator2>();
 
-        // Configuración según dificultad
+        // Configure based on difficulty
         if (DifficultyManager.Instance == null || boardManager == null)
         {
-            // Modo difícil por defecto si alguno es null
+            // Default to difficult mode if null
             if (boardManager != null)
             {
                 boardManager.detectorCols = 12;
@@ -73,7 +70,7 @@ public class GameMode2Manager : MonoBehaviour
         {
             boardManager.detectorCols = 6;
             boardManager.detectorRows = 5;
-            opGen.minOperand = 1;
+            opGen.minOperand = 2;
             opGen.maxOperand = 4;
         }
 
@@ -90,13 +87,13 @@ public class GameMode2Manager : MonoBehaviour
             controlKeyManager.OnKeyCombinationPressed -= HandleKeyCombination;
     }
 
-    // Called every time OperationGenerator2 generates a brand‐new a×b
+    // Called when a new operation is generated
     void OnNewOperation(int a, int b, OperationGenerator2.SubMode mode)
     {
-        // Update the UI (e.g. “5 × 4”)
+        // Update the UI
         ui.SetOperation(a, '×', b);
 
-        // Re‐spawn all detectors (full reset)
+        // Reset the board
         boardManager.SpawnDetectors();
         foreach (var t in boardManager.Tiles)
             t.ResetTile();
@@ -114,7 +111,7 @@ public class GameMode2Manager : MonoBehaviour
         if (!roundActive)
             return;
 
-        // As soon as they step on the very first tile, record it as “origin”
+        // Set origin tile when first tile is filled
         if (!originSet)
         {
             originTile = boardManager.Tiles.FirstOrDefault(t => t.isFilled);
@@ -123,26 +120,21 @@ public class GameMode2Manager : MonoBehaviour
                 originSet = true;
                 Debug.Log($"[Mode2] Origin chosen at {originTile.gridPos}");
 
-                // ─────────────────────────────────
-                // Highlight that “origin” tile in a different color:
+                // Highlight origin tile
                 Renderer mr = originTile.GetComponent<Renderer>();
                 if (mr != null)
                     mr.material.color = originColor;
-                // ─────────────────────────────────
             }
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // This method only runs when the players press BOTH “NEXT” keys
-    // (i.e. when KeyType.NEXT is fired by ControlKeyManager).
+    // Handle key combinations
     void HandleKeyCombination(KeyType key)
     {
         switch (key)
         {
             case KeyType.NEXT:
-                // If we are still “roundActive == true”, that means they have not yet validated.
-                // Once they press NEXT, we check “did they actually build the correct rectangle?”
+                // Check result if round is active
                 if (roundActive && checkRoutine == null && !isCheckingResult)
                 {
                     checkRoutine = StartCoroutine(CheckResultRoutine());
@@ -153,7 +145,7 @@ public class GameMode2Manager : MonoBehaviour
                 if (roundActive)
                 {
                     Debug.Log("[Mode2] CLEAR pressed → reset this same operation");
-                    ResetRound();  // same a×b, let them try again
+                    ResetRound();  // Reset for same operation
                 }
                 break;
 
@@ -164,6 +156,7 @@ public class GameMode2Manager : MonoBehaviour
         }
     }
 
+    // Coroutine for checking result
     IEnumerator CheckResultRoutine()
     {
         isCheckingResult = true;
@@ -194,6 +187,7 @@ public class GameMode2Manager : MonoBehaviour
         isCheckingResult = false;
     }
 
+    // Cancel the check
     public void CancelCheck()
     {
         if (checkRoutine != null)
@@ -212,17 +206,17 @@ public class GameMode2Manager : MonoBehaviour
         Debug.Log("Confirmación cancelada por salida de casilla.");
     }
 
-    // Called when NEXT is pressed the first time in a round
+    // Validate the current answer
     void ValidateCurrentAnswer()
     {
         if (!originSet)
         {
-            // They never stepped on any tile, so for sure it’s wrong
+            // No tiles filled, so it's wrong
             StartCoroutine(LoseSequence());
             return;
         }
 
-        // Count how many tiles are lit horizontally/vertically from origin
+        // Count filled tiles horizontally/vertically from origin
         int a = opGen.operandA;
         int b = opGen.operandB;
         CountDir(originTile, true, out int negH, out int posH);
@@ -238,7 +232,7 @@ public class GameMode2Manager : MonoBehaviour
 
         if ((width == a && height == b) || (width == b && height == a))
         {
-            // They got the correct a×b (or b×a):
+            // Correct answer
             Debug.Log($"[Mode2] ✔ Correct answer!");
             StartCoroutine(WinSequence(width, height, negH, negV));
         }
@@ -250,18 +244,18 @@ public class GameMode2Manager : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
+    // Coroutine for win sequence
     IEnumerator WinSequence(int w, int h, int negH, int negV)
     {
-        // 1) Play Win VFX
+        // Play win VFX
         if (celebrationVFX != null)
             celebrationVFX.Play();
 
-        // 2) Play Win SFX
+        // Play win SFX
         if (winAudioSource != null && winAudioClip != null)
             winAudioSource.PlayOneShot(winAudioClip, winVolume);
 
-        // 4) Immediately fill all tiles in that rectangle (no extra wait)
+        // Fill all tiles in the rectangle
         int sx = originTile.gridPos.x - negH;
         int sy = originTile.gridPos.y - negV;
         foreach (var t in boardManager.Tiles)
@@ -274,16 +268,17 @@ public class GameMode2Manager : MonoBehaviour
             }
         }
 
-        // 5) Wait a few seconds so players can see the filled rectangle
+        // Wait for players to see the filled rectangle
         yield return new WaitForSeconds(5f);
 
-        // 6) Automatically generate the next operation
+        // Generate next operation
         opGen.Generate();
     }
 
+    // Coroutine for lose sequence
     IEnumerator LoseSequence()
     {
-        // 1) Turn every tile’s mesh red immediately
+        // Turn all tiles red
         foreach (var t in boardManager.Tiles)
         {
             var mr = t.GetComponent<Renderer>();
@@ -293,22 +288,21 @@ public class GameMode2Manager : MonoBehaviour
             }
         }
 
-        // 2) Play Lose SFX (if you assigned one)
+        // Play lose SFX
         if (loseAudioSource != null && loseAudioClip != null)
             loseAudioSource.PlayOneShot(loseAudioClip, loseVolume);
 
-        // 3) (Text output has been removed)
-
-        // 4) Wait so they can see the red‐board / SFX
+        // Wait for players to see the red board
         yield return new WaitForSeconds(2f);
 
-        // 5) Automatically generate the next operation
+        // Generate next operation
         opGen.Generate();
     }
 
+    // Reset the round
     void ResetRound()
     {
-        // Re‐spawn all detectors (tiles) and clear them
+        // Reset the board
         boardManager.SpawnDetectors();
         foreach (var t in boardManager.Tiles)
             t.ResetTile();
@@ -318,15 +312,13 @@ public class GameMode2Manager : MonoBehaviour
         originTile = null;
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Count how many consecutively‐filled tiles exist in the positive
-    // and negative directions from “origin”. Used for forming the rectangle.
+    // Count filled tiles in a direction from origin
     void CountDir(TileController origin, bool horiz, out int neg, out int pos)
     {
         neg = pos = 0;
         var all = boardManager.Tiles;
 
-        // positive direction
+        // Count in positive direction
         for (int d = 1; ; d++)
         {
             int x = horiz ? origin.gridPos.x + d : origin.gridPos.x;
@@ -336,7 +328,7 @@ public class GameMode2Manager : MonoBehaviour
             else break;
         }
 
-        // negative direction
+        // Count in negative direction
         for (int d = 1; ; d++)
         {
             int x = horiz ? origin.gridPos.x - d : origin.gridPos.x;

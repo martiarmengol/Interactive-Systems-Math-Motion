@@ -8,34 +8,32 @@ public class TileController : MonoBehaviour
 {
 
     [Header("Blinking Settings")]
-    public Color blinkColor = Color.yellow;  // Color asignable desde el Inspector
+    public Color blinkColor = Color.yellow;  // Color for blinking effect
     private Coroutine blinkRoutine;
 
     private Renderer rend;
 
-    [HideInInspector] public Vector2Int gridPos;
-    [HideInInspector] public bool isFilled = false;
+    [HideInInspector] public Vector2Int gridPos; // Grid position
+    [HideInInspector] public bool isFilled = false; // Is the tile filled?
 
-    public Collider interactionCollider;
-    public UnityEvent<TileController> onTileFilled;
+    public Collider interactionCollider; // Collider for interaction
+    public UnityEvent<TileController> onTileFilled; // Event when tile is filled
 
-    public ColorChangeOnTouch colorChanger;
+    public ColorChangeOnTouch colorChanger; // Handles color changes
 
     [Header("Audio")]
     [Tooltip("Sound to play when a player steps on this tile.")]
-    public AudioClip stepSound;
+    public AudioClip stepSound; // Sound to play on step
     [Tooltip("Volume for the step sound (0..1).")]
     [Range(0f, 100f)]
+    public float stepVolume = 1f; // Volume for step sound
 
-
-    public GameMode1Manager gameManager;
+    public GameMode1Manager gameManager; // Reference to game manager
 
     [Header("Difficulty Selection")]
-    public bool isDifficultySelector = false;
-    public Difficulty selectedDifficulty;  // Easy o Difficult
+    public bool isDifficultySelector = false; // Is this a difficulty selector tile?
+    public Difficulty selectedDifficulty;  // Selected difficulty if used as selector
 
-
-    public float stepVolume = 1f;
 
     private void Awake()
     {
@@ -44,26 +42,27 @@ public class TileController : MonoBehaviour
         colorChanger?.ResetToInitialColor();
     }
 
+    // Called when something triggers this tile
     public void NotifyTrigger(Collider other)
     {
-        // Play the step sound exactly once when the tile transitions to ‘filled’.
+        // Play the step sound and fill the tile if a player steps on it
         if ((!isFilled && other.CompareTag("Player")) ||
              (colorChanger != null && colorChanger.IsSelected && !isFilled && other.CompareTag("Player")))
         {
-            // 1) Play the audio cue:
+            // Play audio cue
             if (stepSound != null)
             {
-                // Use PlayClipAtPoint so you don't need a per-tile AudioSource:
                 AudioSource.PlayClipAtPoint(stepSound, transform.position, stepVolume);
             }
 
+            // If this tile is a difficulty selector, set the difficulty
             if (isDifficultySelector)
             {
                 DifficultyManager.Instance?.SetDifficulty(selectedDifficulty);
                 return;
             }
 
-            // 2) Then continue with the existing “fill” logic:
+            // Fill logic
             if (colorChanger != null && colorChanger.IsSelected)
             {
                 colorChanger.NotifyTrigger(other);
@@ -81,6 +80,7 @@ public class TileController : MonoBehaviour
         }
     }
 
+    // Called when something exits this tile
     public void NotifyExit(Collider other)
     {
         if (colorChanger != null && colorChanger.IsSelected)
@@ -93,7 +93,7 @@ public class TileController : MonoBehaviour
             colorChanger?.NotifyExit(other);
         }
 
-        // Notificar salida para posible cancelación
+        // Notify game manager for possible cancel
         if (other.CompareTag("Player") && gameManager != null)
         {
             gameManager.CancelCheck();
@@ -101,18 +101,21 @@ public class TileController : MonoBehaviour
     }
 
 
+    // Reset tile to initial state
     public void ResetTile()
     {
         isFilled = false;
         colorChanger?.ResetToInitialColor();
     }
 
+    // Instantly fill and light up the tile
     public void FillInstant()
     {
         isFilled = true;
         colorChanger?.ForceLitColor();
     }
 
+    // Start blinking effect
     public void StartBlink()
     {
         if (blinkRoutine == null && isFilled)
@@ -121,17 +124,18 @@ public class TileController : MonoBehaviour
         }
     }
 
+    // Stop blinking effect
     public void StopBlink()
     {
         if (blinkRoutine != null)
         {
             StopCoroutine(blinkRoutine);
             blinkRoutine = null;
-            // Volver al color lit
-            colorChanger?.ForceLitColor();
+            colorChanger?.ForceLitColor(); // Restore lit color
         }
     }
 
+    // Coroutine for blinking effect
     private IEnumerator BlinkCoroutine()
     {
         Color lit = colorChanger.litColor;

@@ -8,26 +8,22 @@ public class OperationGenerator2 : MonoBehaviour
     public enum SubMode { Addition, Multiplication, Mixed }
 
     [Header("Mode Settings")]
-    public SubMode subMode = SubMode.Multiplication;
-    public int minOperand = 2;
-    public int maxOperand = 6;
+    public SubMode subMode = SubMode.Multiplication; // Current operation mode
+    public int minOperand = 2; // Minimum operand value
+    public int maxOperand = 6; // Maximum operand value
 
-    // output
-    public int operandA { get; private set; }
-    public int operandB { get; private set; }
-    public SubMode CurrentMode { get; private set; }
+    // Output
+    public int operandA { get; private set; } // First operand
+    public int operandB { get; private set; } // Second operand
+    public SubMode CurrentMode { get; private set; } // Current operation mode
 
-    /// <summary>
-    /// Fired immediately after Generate() picks new operands.
-    /// </summary>
+    // Event triggered when new operation is generated
     public event Action<int, int, SubMode> OnOperationGenerated;
 
-    /// <summary>
-    /// Call this to pick a new operation.
-    /// </summary>
+    // Generate a new random operation
     public void Generate()
     {
-        // allow “mixed” to randomly pick A or M
+        // Allow 'mixed' to randomly pick Addition or Multiplication
         CurrentMode = subMode == SubMode.Mixed
             ? (UnityEngine.Random.value < 0.5f ? SubMode.Addition : SubMode.Multiplication)
             : subMode;
@@ -38,18 +34,14 @@ public class OperationGenerator2 : MonoBehaviour
         OnOperationGenerated?.Invoke(operandA, operandB, CurrentMode);
     }
 
-    /// <summary>
-    /// Returns a display string like “3 + 2” or “4 × 5”
-    /// </summary>
+    // Get the operation as a string (e.g., "3 + 2" or "4 Ã— 5")
     public string GetOperationString()
     {
-        var op = CurrentMode == SubMode.Addition ? "+" : "×";
+        var op = CurrentMode == SubMode.Addition ? "+" : "Ã—";
         return $"{operandA} {op} {operandB}";
     }
 
-    /// <summary>
-    /// Compute the numerical result.
-    /// </summary>
+    // Calculate the result of the operation
     public int GetResult()
     {
         return CurrentMode == SubMode.Addition

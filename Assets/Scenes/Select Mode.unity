@@ -2519,10 +2519,10 @@ MonoBehaviour:
         m_CallState: 2
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!114 &545746214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2966,7 +2966,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrationUI: {fileID: 220600117}
   trackingInterface: {fileID: 220600112}
-  enableTracking: 0
+  enableTracking: 1
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
@@ -7091,10 +7091,10 @@ MonoBehaviour:
         m_CallState: 2
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!114 &1829376308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8939,10 +8939,10 @@ MonoBehaviour:
         m_CallState: 2
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
+  stepVolume: 1
   gameManager: {fileID: 0}
   isDifficultySelector: 0
   selectedDifficulty: 0
-  stepVolume: 1
 --- !u!114 &2087954977
 MonoBehaviour:
   m_ObjectHideFlags: 0
