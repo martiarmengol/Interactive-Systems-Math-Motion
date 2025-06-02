@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine.SceneManagement;    // ← for LoadScene
 using TMPro;                         // ← for TextMeshProUGUI
 
-
 [RequireComponent(typeof(OperationGenerator2))]
 public class GameMode2Manager : MonoBehaviour
 {
@@ -12,6 +11,8 @@ public class GameMode2Manager : MonoBehaviour
     public UIManager ui;
     public BoardManager boardManager;
 
+    [Header("Origin Highlight")]
+    public Color originColor = Color.yellow;
 
     [Header("Win VFX & SFX")]
     public ParticleSystem celebrationVFX;
@@ -34,7 +35,6 @@ public class GameMode2Manager : MonoBehaviour
 
     private Coroutine checkRoutine = null;
     private bool isCheckingResult = false;
-
 
     // ─────────────────────────────────────────────────────────────
     // Internal state:
@@ -59,9 +59,10 @@ public class GameMode2Manager : MonoBehaviour
                 opGen.minOperand = 5;
                 opGen.maxOperand = 9;
             }
-        } // <-- Aquí faltaba cerrar el primer if
+        }
 
-        if (DifficultyManager.Instance == null || DifficultyManager.Instance.CurrentDifficulty == Difficulty.Difficult)
+        if (DifficultyManager.Instance == null
+            || DifficultyManager.Instance.CurrentDifficulty == Difficulty.Difficult)
         {
             boardManager.detectorCols = 12;
             boardManager.detectorRows = 10;
@@ -83,7 +84,6 @@ public class GameMode2Manager : MonoBehaviour
             controlKeyManager.OnKeyCombinationPressed += HandleKeyCombination;
     }
 
-
     void OnDestroy()
     {
         if (controlKeyManager != null)
@@ -93,7 +93,6 @@ public class GameMode2Manager : MonoBehaviour
     // Called every time OperationGenerator2 generates a brand‐new a×b
     void OnNewOperation(int a, int b, OperationGenerator2.SubMode mode)
     {
-
         // Update the UI (e.g. “5 × 4”)
         ui.SetOperation(a, '×', b);
 
@@ -123,6 +122,13 @@ public class GameMode2Manager : MonoBehaviour
             {
                 originSet = true;
                 Debug.Log($"[Mode2] Origin chosen at {originTile.gridPos}");
+
+                // ─────────────────────────────────
+                // Highlight that “origin” tile in a different color:
+                Renderer mr = originTile.GetComponent<Renderer>();
+                if (mr != null)
+                    mr.material.color = originColor;
+                // ─────────────────────────────────
             }
         }
     }
@@ -142,9 +148,6 @@ public class GameMode2Manager : MonoBehaviour
                     checkRoutine = StartCoroutine(CheckResultRoutine());
                 }
                 break;
-                // If roundActive is false, then we are already in a “win/lose sequence” or paused state.
-                // In this simple implementation, we ignore “NEXT” presses once roundActive==false,
-                // because the coroutines themselves will auto‐advance or reset after their delay.
 
             case KeyType.CLEAR:
                 if (roundActive)
@@ -185,7 +188,7 @@ public class GameMode2Manager : MonoBehaviour
         }
 
         countdownText.gameObject.SetActive(false);
-        ValidateCurrentAnswer(); // llamada a la validación original
+        ValidateCurrentAnswer();
 
         checkRoutine = null;
         isCheckingResult = false;
@@ -208,7 +211,6 @@ public class GameMode2Manager : MonoBehaviour
         countdownText.gameObject.SetActive(false);
         Debug.Log("Confirmación cancelada por salida de casilla.");
     }
-
 
     // Called when NEXT is pressed the first time in a round
     void ValidateCurrentAnswer()
@@ -279,7 +281,6 @@ public class GameMode2Manager : MonoBehaviour
         opGen.Generate();
     }
 
-
     IEnumerator LoseSequence()
     {
         // 1) Turn every tile’s mesh red immediately
@@ -305,11 +306,8 @@ public class GameMode2Manager : MonoBehaviour
         opGen.Generate();
     }
 
-
-
     void ResetRound()
     {
-
         // Re‐spawn all detectors (tiles) and clear them
         boardManager.SpawnDetectors();
         foreach (var t in boardManager.Tiles)

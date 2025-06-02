@@ -4881,11 +4881,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: dc13be43d4d2a1e4798af2411e0abe1b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7ea25a85606811249bcaf63b77ab4fd6, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.05
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -14436,6 +14436,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!114 &1829376308
 MonoBehaviour:

@@ -539,6 +539,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!1 &51673985
 GameObject:
@@ -3752,6 +3754,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!1 &569510989
 GameObject:
@@ -5218,6 +5222,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!4 &752324773
 Transform:
@@ -6270,6 +6276,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!1 &937439003
 GameObject:
@@ -8706,6 +8714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ui: {fileID: 535982645}
   boardManager: {fileID: 1119794203}
+  originColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   celebrationVFX: {fileID: 22606570}
   winAudioSource: {fileID: 1504746478}
   winAudioClip: {fileID: 8300000, guid: cf9a255ccfd90ef48963290221e179f0, type: 3}
@@ -9110,7 +9119,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7750853977139984562, guid: 6a7b26737f4a19a40b5f385c66dc96a9, type: 3}
       propertyPath: lengthInSec
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7750853977139984562, guid: 6a7b26737f4a19a40b5f385c66dc96a9, type: 3}
       propertyPath: playOnAwake
@@ -10224,11 +10233,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: dc13be43d4d2a1e4798af2411e0abe1b, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.05
+  m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -17199,6 +17208,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!4 &1936964335
 Transform:
@@ -18250,6 +18261,8 @@ MonoBehaviour:
   colorChanger: {fileID: 0}
   stepSound: {fileID: 0}
   gameManager: {fileID: 0}
+  isDifficultySelector: 0
+  selectedDifficulty: 0
   stepVolume: 1
 --- !u!1 &2041817075
 GameObject:
