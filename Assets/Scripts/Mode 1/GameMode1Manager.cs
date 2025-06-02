@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -10,14 +10,23 @@ public class GameMode1Manager : MonoBehaviour
     public BoardManager board;
     public OperationGenerator opGen;
     public UIManager ui;
-    public ParticleSystem winVFX;
-    public ParticleSystem loseVFX;
 
     [Header("Control Keys")]
     public ControlKeyManager controlKeyManager;
 
-    [Header("UI")]
-    public TextMeshProUGUI resultText;
+    [Header("Win VFX & SFX")]
+    public ParticleSystem celebrationVFX;
+    public AudioSource winAudioSource;
+    public AudioClip winAudioClip;
+    [Range(0f, 1f)]
+    public float winVolume = 1f;
+
+    [Header("Lose VFX & SFX")]
+    public ParticleSystem loseVFX;
+    public AudioSource loseAudioSource;
+    public AudioClip loseAudioClip;
+    [Range(0f, 1f)]
+    public float loseVolume = 1f;
 
     private int targetCount;
     private HashSet<TileController> filled = new HashSet<TileController>();
@@ -99,7 +108,7 @@ public class GameMode1Manager : MonoBehaviour
 
         isCheckingResult = false;
         countdownText.gameObject.SetActive(false);
-        Debug.Log("Confirmación cancelada por salida de casilla.");
+        Debug.Log("ConfirmaciÃ³n cancelada por salida de casilla.");
     }
 
     void OnTileFilled(TileController tile)
@@ -114,7 +123,6 @@ public class GameMode1Manager : MonoBehaviour
         board.SpawnDetectors();
         filled.Clear();
         isCheckingResult = false;
-        resultText.gameObject.SetActive(false);
         countdownText.gameObject.SetActive(false);
 
         foreach (var t in board.Tiles)
@@ -145,19 +153,26 @@ public class GameMode1Manager : MonoBehaviour
 
     void Win()
     {
-        Debug.Log("¡Victoria! Resultado correcto");
-        resultText.text = "¡Victoria!";
-        resultText.gameObject.SetActive(true);
-        // winVFX?.Play();
+        Debug.Log("Â¡Victoria! Resultado correcto");
+
+        celebrationVFX.Play();
+        winAudioSource.PlayOneShot(winAudioClip, winVolume);
         StartCoroutine(RestartAfterDelay(2f));
     }
 
     void Lose()
     {
         Debug.Log("Derrota. Resultado incorrecto");
-        resultText.text = "Derrota";
-        resultText.gameObject.SetActive(true);
-        // loseVFX?.Play();
+        foreach (var t in board.Tiles)
+        {
+            var mr = t.GetComponent<Renderer>();
+            if (mr != null)
+            {
+                mr.material.color = Color.red;
+            }
+        }
+
+        loseAudioSource.PlayOneShot(loseAudioClip, loseVolume);
         StartCoroutine(RestartAfterDelay(2f));
     }
 
@@ -167,7 +182,6 @@ public class GameMode1Manager : MonoBehaviour
         board.SpawnDetectors();
         filled.Clear();
         isCheckingResult = false;
-        resultText.gameObject.SetActive(false);
 
         foreach (var t in board.Tiles)
         {

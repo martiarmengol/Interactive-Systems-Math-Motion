@@ -25,7 +25,7 @@ public class TileController : MonoBehaviour
     [Tooltip("Sound to play when a player steps on this tile.")]
     public AudioClip stepSound;
     [Tooltip("Volume for the step sound (0..1).")]
-    [Range(0f, 1f)]
+    [Range(0f, 100f)]
 
 
     public GameMode1Manager gameManager;

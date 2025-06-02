@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
-using UnityEngine.SceneManagement;                   // ← for LoadScene
-using System;                                        // ← for Action<>
-using TMPro;                                         // ← for TextMeshProUGUI
+using UnityEngine.SceneManagement;    // ← for LoadScene
+using TMPro;                         // ← for TextMeshProUGUI
 
 [RequireComponent(typeof(OperationGenerator2))]
 public class GameMode2Manager : MonoBehaviour
@@ -12,33 +11,41 @@ public class GameMode2Manager : MonoBehaviour
     public UIManager ui;
     public BoardManager boardManager;
 
-    [Header("Result Text (win/lose popup)")]
-    public TextMeshProUGUI resultText;                  // ← NEW: assigns the “¡Victoria!” text
 
-    [Header("Optional VFX")]
+    [Header("Win VFX & SFX")]
     public ParticleSystem celebrationVFX;
+    public AudioSource winAudioSource;
+    public AudioClip winAudioClip;
+    [Range(0f, 1f)]
+    public float winVolume = 1f;
+
+    [Header("Lose VFX & SFX")]
+    public ParticleSystem loseVFX;
+    public AudioSource loseAudioSource;
+    public AudioClip loseAudioClip;
+    [Range(0f, 1f)]
+    public float loseVolume = 1f;
 
     [Header("Control Keys (dual-player)")]
-    public ControlKeyManager controlKeyManager;       
+    public ControlKeyManager controlKeyManager;
 
-    // internal state
+    // ─────────────────────────────────────────────────────────────
+    // Internal state:
     OperationGenerator2 opGen;
-    bool roundActive;
-    bool originSet;
+    bool roundActive;       // “true” while we are waiting for students to fill in tiles
+    bool originSet;         // “true” once we've seen at least one filled tile
     TileController originTile;
 
+    // ─────────────────────────────────────────────────────────────
     void Start()
     {
         opGen = GetComponent<OperationGenerator2>();
         opGen.OnOperationGenerated += OnNewOperation;
 
-        // Hide resultText at the very beginning
-        if (resultText != null)
-            resultText.gameObject.SetActive(false);
-
+        // Kick off the first operation
         opGen.Generate();
 
-        // Subscribe to the dual-player buttons:
+        // Subscribe to the dual-player control‐key event
         if (controlKeyManager != null)
             controlKeyManager.OnKeyCombinationPressed += HandleKeyCombination;
     }
@@ -49,47 +56,90 @@ public class GameMode2Manager : MonoBehaviour
             controlKeyManager.OnKeyCombinationPressed -= HandleKeyCombination;
     }
 
-    // This is called whenever OperationGenerator2 fires a new operation
+    // Called every time OperationGenerator2 generates a brand‐new a×b
     void OnNewOperation(int a, int b, OperationGenerator2.SubMode mode)
     {
-        // Hide any leftover result text
-        if (resultText != null)
-            resultText.gameObject.SetActive(false);
 
+        // Update the UI (e.g. “5 × 4”)
         ui.SetOperation(a, '×', b);
+
+        // Re‐spawn all detectors (full reset)
         boardManager.SpawnDetectors();
         foreach (var t in boardManager.Tiles)
             t.ResetTile();
 
+        // Reset state flags
         originSet = false;
         roundActive = true;
+        originTile = null;
 
         Debug.Log($"[Mode2] New op {a}×{b}");
     }
 
     void Update()
     {
-        if (!roundActive) return;
+        if (!roundActive)
+            return;
 
-        // pick the very first filled tile as origin
+        // As soon as they step on the very first tile, record it as “origin”
         if (!originSet)
         {
             originTile = boardManager.Tiles.FirstOrDefault(t => t.isFilled);
             if (originTile != null)
             {
                 originSet = true;
-                Debug.Log($"[Mode2] Origin at {originTile.gridPos}");
+                Debug.Log($"[Mode2] Origin chosen at {originTile.gridPos}");
             }
-        }
-        else
-        {
-            TryComplete();
         }
     }
 
-    void TryComplete()
+    // ─────────────────────────────────────────────────────────────
+    // This method only runs when the players press BOTH “NEXT” keys
+    // (i.e. when KeyType.NEXT is fired by ControlKeyManager).
+    void HandleKeyCombination(KeyType key)
     {
-        int a = opGen.operandA, b = opGen.operandB;
+        switch (key)
+        {
+            case KeyType.NEXT:
+                // If we are still “roundActive == true”, that means they have not yet validated.
+                // Once they press NEXT, we check “did they actually build the correct rectangle?”
+                if (roundActive)
+                {
+                    ValidateCurrentAnswer();
+                }
+                // If roundActive is false, then we are already in a “win/lose sequence” or paused state.
+                // In this simple implementation, we ignore “NEXT” presses once roundActive==false,
+                // because the coroutines themselves will auto‐advance or reset after their delay.
+                break;
+
+            case KeyType.CLEAR:
+                if (roundActive)
+                {
+                    Debug.Log("[Mode2] CLEAR pressed → reset this same operation");
+                    ResetRound();  // same a×b, let them try again
+                }
+                break;
+
+            case KeyType.MAIN_MENU:
+                Debug.Log("[Mode2] MAIN_MENU pressed → back to Select Mode");
+                SceneManager.LoadScene("Select Mode");
+                break;
+        }
+    }
+
+    // Called when NEXT is pressed the first time in a round
+    void ValidateCurrentAnswer()
+    {
+        if (!originSet)
+        {
+            // They never stepped on any tile, so for sure it’s wrong
+            StartCoroutine(LoseSequence());
+            return;
+        }
+
+        // Count how many tiles are lit horizontally/vertically from origin
+        int a = opGen.operandA;
+        int b = opGen.operandB;
         CountDir(originTile, true, out int negH, out int posH);
         CountDir(originTile, false, out int negV, out int posV);
 
@@ -97,31 +147,36 @@ public class GameMode2Manager : MonoBehaviour
         int height = negV + posV + 1;
 
         Debug.Log($"[Mode2] Computed size {width}×{height}   Target {a}×{b}");
+
+        // Freeze further Update calls
+        roundActive = false;
+
         if ((width == a && height == b) || (width == b && height == a))
         {
-            Debug.Log($"[Mode2] ✔ Match {width}×{height}");
-            roundActive = false;
-            StartCoroutine(CompleteAfterDelay(width, height, negH, negV));
+            // They got the correct a×b (or b×a):
+            Debug.Log($"[Mode2] ✔ Correct answer!");
+            StartCoroutine(WinSequence(width, height, negH, negV));
+        }
+        else
+        {
+            // Wrong shape
+            Debug.Log($"[Mode2] ✖ Incorrect answer.");
+            StartCoroutine(LoseSequence());
         }
     }
 
-    IEnumerator CompleteAfterDelay(int w, int h, int negH, int negV)
+    // ─────────────────────────────────────────────────────────────
+    IEnumerator WinSequence(int w, int h, int negH, int negV)
     {
-        // Play celebration VFX
-        if (celebrationVFX)
+        // 1) Play Win VFX
+        if (celebrationVFX != null)
             celebrationVFX.Play();
 
-        // Show the “¡Victoria!” text immediately
-        if (resultText != null)
-        {
-            resultText.text = "¡Victoria!";
-            resultText.gameObject.SetActive(true);
-        }
+        // 2) Play Win SFX
+        if (winAudioSource != null && winAudioClip != null)
+            winAudioSource.PlayOneShot(winAudioClip, winVolume);
 
-        // Wait 2 seconds before filling the rectangle area
-        yield return new WaitForSeconds(2f);
-
-        // Compute start coordinates based on origin + negative offsets
+        // 4) Immediately fill all tiles in that rectangle (no extra wait)
         int sx = originTile.gridPos.x - negH;
         int sy = originTile.gridPos.y - negV;
         foreach (var t in boardManager.Tiles)
@@ -134,71 +189,77 @@ public class GameMode2Manager : MonoBehaviour
             }
         }
 
-        Debug.Log("[Mode2] Rectangle filled — waiting for NEXT or CLEAR");
-        // Now the game is “paused” (roundActive = false), waiting for the player
-        // to press NEXT or CLEAR. We do NOT immediately generate a new op here.
+        // 5) Wait a few seconds so players can see the filled rectangle
+        yield return new WaitForSeconds(5f);
+
+        // 6) Automatically generate the next operation
+        opGen.Generate();
     }
 
-    // ----------------------------------------------------------------
-    // Dual-player control keys
-    void HandleKeyCombination(KeyType key)
+
+    IEnumerator LoseSequence()
     {
-        switch (key)
+        // 1) Turn every tile’s mesh red immediately
+        foreach (var t in boardManager.Tiles)
         {
-            case KeyType.NEXT:
-                if (!roundActive)
-                {
-                    Debug.Log("[Mode2] NEXT pressed → next operation");
-                    opGen.Generate();
-                }
-                break;
-
-            case KeyType.CLEAR:
-                Debug.Log("[Mode2] CLEAR pressed → reset this round");
-                ResetRound();
-                break;
-
-            case KeyType.MAIN_MENU:
-                Debug.Log("[Mode2] MAIN_MENU pressed → back to Select Mode");
-                SceneManager.LoadScene("Select Mode");
-                break;
+            var mr = t.GetComponent<Renderer>();
+            if (mr != null)
+            {
+                mr.material.color = Color.red;
+            }
         }
+
+        // 2) Play Lose SFX (if you assigned one)
+        if (loseAudioSource != null && loseAudioClip != null)
+            loseAudioSource.PlayOneShot(loseAudioClip, loseVolume);
+
+        // 3) (Text output has been removed)
+
+        // 4) Wait so they can see the red‐board / SFX
+        yield return new WaitForSeconds(2f);
+
+        // 5) Reset this same operation (same a×b) so they can try again
+        ResetRound();
     }
+
+
 
     void ResetRound()
     {
-        // Hide any result text from the previous round
-        if (resultText != null)
-            resultText.gameObject.SetActive(false);
 
-        // “Reset” is basically the same as OnNewOperation, but preserving a×b
+        // Re‐spawn all detectors (tiles) and clear them
         boardManager.SpawnDetectors();
         foreach (var t in boardManager.Tiles)
             t.ResetTile();
 
         originSet = false;
         roundActive = true;
+        originTile = null;
     }
 
-    // ----------------------------------------------------------------
-    void CountDir(TileController o, bool horiz, out int neg, out int pos)
+    // ─────────────────────────────────────────────────────────────
+    // Count how many consecutively‐filled tiles exist in the positive
+    // and negative directions from “origin”. Used for forming the rectangle.
+    void CountDir(TileController origin, bool horiz, out int neg, out int pos)
     {
         neg = pos = 0;
         var all = boardManager.Tiles;
+
         // positive direction
         for (int d = 1; ; d++)
         {
-            int x = horiz ? o.gridPos.x + d : o.gridPos.x;
-            int y = horiz ? o.gridPos.y : o.gridPos.y + d;
+            int x = horiz ? origin.gridPos.x + d : origin.gridPos.x;
+            int y = horiz ? origin.gridPos.y : origin.gridPos.y + d;
             var t = all.FirstOrDefault(t2 => t2.gridPos.x == x && t2.gridPos.y == y);
             if (t != null && t.isFilled) pos++;
             else break;
         }
+
         // negative direction
         for (int d = 1; ; d++)
         {
-            int x = horiz ? o.gridPos.x - d : o.gridPos.x;
-            int y = horiz ? o.gridPos.y : o.gridPos.y - d;
+            int x = horiz ? origin.gridPos.x - d : origin.gridPos.x;
+            int y = horiz ? origin.gridPos.y : origin.gridPos.y - d;
             var t = all.FirstOrDefault(t2 => t2.gridPos.x == x && t2.gridPos.y == y);
             if (t != null && t.isFilled) neg++;
             else break;
