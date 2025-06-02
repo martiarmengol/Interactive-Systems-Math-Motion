@@ -1335,6 +1335,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ring p2
       objectReference: {fileID: 0}
+    - target: {fileID: 3678716406857755550, guid: ceca8c96c1304784ab0296625e84e698, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0502b0255cbcf4542b9693d03b73d482, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceca8c96c1304784ab0296625e84e698, type: 3}
 --- !u!4 &185509408 stripped
@@ -3473,7 +3477,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   calibrationUI: {fileID: 220600117}
   trackingInterface: {fileID: 220600112}
-  enableTracking: 1
+  enableTracking: 0
   numberOfPlayers: 2
   numberOfBaseStations: 4
   enableRotation: 0
@@ -3484,7 +3488,7 @@ MonoBehaviour:
   - {fileID: 1471923275}
   calibrationSaveFilePath: D:\Calibration\Eje Z
   playerSelected: 1
-  trackingDisabledPlayerSpeed: 10
+  trackingDisabledPlayerSpeed: 20
 --- !u!1 &613147104
 GameObject:
   m_ObjectHideFlags: 0
@@ -4126,6 +4130,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ring p1
       objectReference: {fileID: 0}
+    - target: {fileID: 3678716406857755550, guid: ceca8c96c1304784ab0296625e84e698, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0502b0255cbcf4542b9693d03b73d482, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceca8c96c1304784ab0296625e84e698, type: 3}
 --- !u!1 &727992050 stripped
@@ -14406,6 +14414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371c105d677cb9842a5ade9329e65395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blinkColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   gridPos: {x: 0, y: 0}
   isFilled: 0
   interactionCollider: {fileID: 1423295638}
@@ -14425,6 +14434,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   colorChanger: {fileID: 0}
+  stepSound: {fileID: 0}
+  gameManager: {fileID: 0}
+  stepVolume: 1
 --- !u!114 &1829376308
 MonoBehaviour:
   m_ObjectHideFlags: 0

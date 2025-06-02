@@ -51,7 +51,7 @@ public class TrackingManager : MonoBehaviour
     // Attributes for non-tracking input
     [Header("Non-tracking")]
     [SerializeField] private int playerSelected = 1;
-    [SerializeField] private int trackingDisabledPlayerSpeed = 5;
+    [SerializeField] private int trackingDisabledPlayerSpeed = 20;
 
     private int playerRotDatatSize = 7;
     private float positionUpdateInterval = 0.01f;

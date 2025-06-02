@@ -1,9 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
+
 
 [RequireComponent(typeof(Collider))]
 public class TileController : MonoBehaviour
 {
+
+    [Header("Blinking Settings")]
+    public Color blinkColor = Color.yellow;  // Color asignable desde el Inspector
+    private Coroutine blinkRoutine;
+
+    private Renderer rend;
+
     [HideInInspector] public Vector2Int gridPos;
     [HideInInspector] public bool isFilled = false;
 
@@ -17,11 +26,18 @@ public class TileController : MonoBehaviour
     public AudioClip stepSound;
     [Tooltip("Volume for the step sound (0..1).")]
     [Range(0f, 1f)]
+
+
+    public GameMode1Manager gameManager;
+
+
+
     public float stepVolume = 1f;
 
     private void Awake()
     {
         colorChanger = GetComponent<ColorChangeOnTouch>();
+        rend = GetComponent<Renderer>();
         colorChanger?.ResetToInitialColor();
     }
 
@@ -61,13 +77,20 @@ public class TileController : MonoBehaviour
         if (colorChanger != null && colorChanger.IsSelected)
         {
             colorChanger.NotifyExit(other);
-            isFilled = false; // allow reactivation
+            isFilled = false;
         }
         else if (isFilled && other.CompareTag("Player"))
         {
             colorChanger?.NotifyExit(other);
         }
+
+        // Notificar salida para posible cancelación
+        if (other.CompareTag("Player") && gameManager != null)
+        {
+            gameManager.CancelCheck();
+        }
     }
+
 
     public void ResetTile()
     {
@@ -79,5 +102,38 @@ public class TileController : MonoBehaviour
     {
         isFilled = true;
         colorChanger?.ForceLitColor();
+    }
+
+    public void StartBlink()
+    {
+        if (blinkRoutine == null && isFilled)
+        {
+            blinkRoutine = StartCoroutine(BlinkCoroutine());
+        }
+    }
+
+    public void StopBlink()
+    {
+        if (blinkRoutine != null)
+        {
+            StopCoroutine(blinkRoutine);
+            blinkRoutine = null;
+            // Volver al color lit
+            colorChanger?.ForceLitColor();
+        }
+    }
+
+    private IEnumerator BlinkCoroutine()
+    {
+        Color lit = colorChanger.litColor;
+        Color alt = blinkColor;
+
+        while (true)
+        {
+            rend.material.color = alt;
+            yield return new WaitForSeconds(0.3f);
+            rend.material.color = lit;
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 }

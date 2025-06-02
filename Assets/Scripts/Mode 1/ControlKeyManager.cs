@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public enum KeyType { MAIN_MENU, NEXT, CLEAR }
 
 public class ControlKeyManager : MonoBehaviour
 {
-    
-
     [System.Serializable]
     public class ControlKeyPair
     {
@@ -23,30 +20,55 @@ public class ControlKeyManager : MonoBehaviour
     private Dictionary<KeyType, int> activeKeys = new Dictionary<KeyType, int>();
     private Dictionary<KeyType, bool> keyPairsPressed = new Dictionary<KeyType, bool>();
 
+    private class KeyEventDelegates
+    {
+        public ColorChangeOnTouch.TileLitHandler onLit;
+        public ColorChangeOnTouch.TileLitHandler onUnlit;
+    }
+
+    private Dictionary<TileController, KeyEventDelegates> keyDelegates = new Dictionary<TileController, KeyEventDelegates>();
+
+
     void Start()
     {
-        // Inicializar diccionarios
         foreach (KeyType type in System.Enum.GetValues(typeof(KeyType)))
         {
-            activeKeys.Add(type, 0);
-            keyPairsPressed.Add(type, false);
+            activeKeys[type] = 0;
+            keyPairsPressed[type] = false;
         }
 
-        // Suscribir eventos
         foreach (var pair in controlKeyPairs)
         {
-            if (pair.keyPlayer1 != null && pair.keyPlayer1.colorChanger != null)
-            {
-                pair.keyPlayer1.colorChanger.OnTileLit += (_) => OnKeyActivated(pair.keyType);
-                pair.keyPlayer1.colorChanger.OnTileUnlit += (_) => OnKeyDeactivated(pair.keyType);
-            }
-
-            if (pair.keyPlayer2 != null && pair.keyPlayer2.colorChanger != null)
-            {
-                pair.keyPlayer2.colorChanger.OnTileLit += (_) => OnKeyActivated(pair.keyType);
-                pair.keyPlayer2.colorChanger.OnTileUnlit += (_) => OnKeyDeactivated(pair.keyType);
-            }
+            SubscribeTile(pair.keyPlayer1, pair.keyType);
+            SubscribeTile(pair.keyPlayer2, pair.keyType);
         }
+    }
+
+    void SubscribeTile(TileController tile, KeyType keyType)
+    {
+        if (tile == null || tile.colorChanger == null) return;
+
+        var delegates = new KeyEventDelegates
+        {
+            onLit = (_) => OnKeyActivated(keyType),
+            onUnlit = (_) => OnKeyDeactivated(keyType)
+        };
+
+        tile.colorChanger.OnTileLit += delegates.onLit;
+        tile.colorChanger.OnTileUnlit += delegates.onUnlit;
+
+        keyDelegates[tile] = delegates;
+    }
+
+    void UnsubscribeTile(TileController tile)
+    {
+        if (tile == null || tile.colorChanger == null || !keyDelegates.ContainsKey(tile)) return;
+
+        var delegates = keyDelegates[tile];
+        tile.colorChanger.OnTileLit -= delegates.onLit;
+        tile.colorChanger.OnTileUnlit -= delegates.onUnlit;
+
+        keyDelegates.Remove(tile);
     }
 
     void OnKeyActivated(KeyType keyType)
@@ -59,6 +81,11 @@ public class ControlKeyManager : MonoBehaviour
     {
         activeKeys[keyType]--;
         keyPairsPressed[keyType] = false;
+
+        if (keyType == KeyType.NEXT)
+        {
+            FindObjectOfType<GameMode1Manager>()?.CancelCheck();
+        }
     }
 
     void CheckKeyCombination(KeyType keyType)
@@ -72,20 +99,10 @@ public class ControlKeyManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // Limpiar suscripciones
         foreach (var pair in controlKeyPairs)
         {
-            if (pair.keyPlayer1 != null && pair.keyPlayer1.colorChanger != null)
-            {
-                pair.keyPlayer1.colorChanger.OnTileLit -= (_) => OnKeyActivated(pair.keyType);
-                pair.keyPlayer1.colorChanger.OnTileUnlit -= (_) => OnKeyDeactivated(pair.keyType);
-            }
-
-            if (pair.keyPlayer2 != null && pair.keyPlayer2.colorChanger != null)
-            {
-                pair.keyPlayer2.colorChanger.OnTileLit -= (_) => OnKeyActivated(pair.keyType);
-                pair.keyPlayer2.colorChanger.OnTileUnlit -= (_) => OnKeyDeactivated(pair.keyType);
-            }
+            UnsubscribeTile(pair.keyPlayer1);
+            UnsubscribeTile(pair.keyPlayer2);
         }
     }
 }

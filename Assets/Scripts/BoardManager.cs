@@ -75,6 +75,7 @@ public class BoardManager : MonoBehaviour
 
                 var tile = go.GetComponent<TileController>();
                 tile.gridPos = new Vector2Int(i, j);
+                tile.gameManager = FindObjectOfType<GameMode1Manager>();
                 spawnedTiles.Add(tile);
 
                 // Desactivar collider del propio detector visual (opcional)
